@@ -1,0 +1,49 @@
+version: '3.2'
+services:
+  backend-1:
+    build: ./backend
+    volumes:
+      - ./data/www:/var/www/html
+    hostname: test-php-1
+    networks:
+      test-network:
+        aliases:
+          - test-php-1
+  backend-2:
+    build: ./backend
+    volumes:
+      - ./data/www:/var/www/html
+    hostname: test-php-2
+    networks:
+      test-network:
+        aliases:
+          - test-php-2
+  db:
+    build: ./db
+    environment:
+      - MYSQL_USER=devops
+      - MYSQL_USER_PWD=devops
+      - MYSQL_USER_DB=devops
+    volumes:
+      - ./data/db:/var/lib/mysql
+    networks:
+      test-network:
+        aliases:
+          - database
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./data/www:/var/www/html
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: host
+    networks:
+      test-network:
+        aliases:
+          - test-nginx
+
+
+networks:
+    test-network:
